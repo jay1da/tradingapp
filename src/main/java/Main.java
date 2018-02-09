@@ -11,12 +11,16 @@ import com.grandslam.data.alphavantage.StockTimeSeriesAdapter;
 import com.granslam.symbols.SupportedSymbols;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class Main {
 
+    private static final Logger logger = LoggerFactory.getLogger(Main.class);
     private static final String BASE_URL = "https://www.alphavantage.co/query?";
     private static final String apiKey = "JXQHPO8NX2ZFXV2Z";
+    private static final String outputSizeFull = "full";
 
 //    private static final String stockSymbol = "AAPL";
     private static final String timeInterval = "5";
@@ -31,13 +35,13 @@ public class Main {
             builder.registerTypeAdapter(StockTimeSeries.class, new StockTimeSeriesAdapter().nullSafe());
             Gson gson = builder.create();
             StockTimeSeries stockTimeSeries = gson.fromJson(jsonString, StockTimeSeries.class);
-            System.out.println(stockTimeSeries);
+            logger.info(stockTimeSeries.toString());
 
             try {
                 JSONObject json = new JSONObject(jsonString);
-                System.out.println(json.toString(4));
+                logger.info(json.toString(4));
             } catch (JSONException e){
-                System.out.println("error with json");
+                logger.error("error with json", e);
             }
         }
 
@@ -46,7 +50,8 @@ public class Main {
     public static String getRequest(SupportedSymbols stockSymbol){
 
         String requestURI = "https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=" +
-                stockSymbol + "&interval=" + timeInterval + "min&apikey=JXQHPO8NX2ZFXV2Z";
+                stockSymbol + "&interval=" + timeInterval + "min&apikey=JXQHPO8NX2ZFXV2Z ";
+//                + "&outputsize=" + outputSizeFull ;
 
         try {
             URL request = new URL(requestURI);
@@ -67,7 +72,7 @@ public class Main {
             bufferedReader.close();
             return responseBuilder.toString();
         } catch (IOException e) {
-            System.out.println("error getting request");
+            logger.error("error getting request", e);
         }
         return "";
     }

@@ -6,6 +6,8 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -14,7 +16,9 @@ import java.io.IOException;
  */
 public class StockTimeSeriesAdapter extends TypeAdapter<StockTimeSeries> {
 
+    private static final Logger logger = LoggerFactory.getLogger(StockTimeSeriesAdapter.class);
     private static final String metaDataTag = "Meta Data";
+
     @Override
     public void write(JsonWriter out, StockTimeSeries value) throws IOException {
         //TODO: will do later

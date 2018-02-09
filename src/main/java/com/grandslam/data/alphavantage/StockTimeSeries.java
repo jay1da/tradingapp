@@ -3,6 +3,7 @@ package com.grandslam.data.alphavantage;
 import com.google.gson.JsonObject;
 import com.granslam.symbols.SupportedSymbols;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -39,11 +40,11 @@ public class StockTimeSeries {
         }
 
         public Date getLastRefreshed() {
-            return lastRefreshed;
+            return new Date(lastRefreshed.getTime());
         }
 
         public void setLastRefreshed(Date lastRefreshed) {
-            this.lastRefreshed = lastRefreshed;
+            this.lastRefreshed = new Date(lastRefreshed.getTime());
         }
 
         public long getInterval() {
@@ -107,11 +108,11 @@ public class StockTimeSeries {
         }
 
         public Date getStartTime() {
-            return startTime;
+            return new Date(startTime.getTime());
         }
 
         public void setStartTime(Date startTime) {
-            this.startTime = startTime;
+            this.startTime = new Date(startTime.getTime());
         }
 
         public double getOpen() {
@@ -158,18 +159,28 @@ public class StockTimeSeries {
     private TimeSeriesMetaData timeSeriesMetaData;
     private ArrayList<TimeSeriesPoint> timeSeriesDataPoints = new ArrayList<>();
 
-    public void setTimeSeriesMetaData(String desc, String symbol, String dateString, String intervalString, String outputSize, String timezone){
+    /**
+     * Creates the TimeSeriesMetaData for the time series data
+     * @param desc
+     * @param symbol
+     * @param dateString
+     * @param intervalString
+     * @param outputSize
+     * @param timezone
+     */
+    public void setTimeSeriesMetaData(String desc, String symbol, String dateString, String intervalString, String outputSize, String timezone) {
         timeSeriesMetaData = new TimeSeriesMetaData();
         timeSeriesMetaData.setDescription(desc);
         timeSeriesMetaData.setSymbol(SupportedSymbols.valueOf(symbol));
-//        timeSeriesMetaData.setLastRefreshed(new Date(dateString)); //TODO: parse the date properly
-//        timeSeriesMetaData.setInterval(intervalString); //TODO: parse the interval properly
+        timeSeriesMetaData.setLastRefreshed(Util.parseDate(dateString));
+        timeSeriesMetaData.setInterval(Util.parseInterval(intervalString));
         timeSeriesMetaData.setOutputSize(outputSize);
         timeSeriesMetaData.setTimeZone(timezone);
     }
 
     /**
      * Adds data point to the time series
+     *
      * @param date
      * @param open
      * @param high
@@ -177,7 +188,7 @@ public class StockTimeSeries {
      * @param close
      * @param volume
      */
-    public void addTimeSeriesPoint(String date, double open, double high, double low, double close, double volume){
+    public void addTimeSeriesPoint(String date, double open, double high, double low, double close, double volume) {
         TimeSeriesPoint point = new TimeSeriesPoint();
         point.setClose(close);
         point.setHigh(high);
